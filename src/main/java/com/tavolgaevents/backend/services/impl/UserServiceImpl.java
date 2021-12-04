@@ -58,4 +58,9 @@ public class UserServiceImpl implements UserService {
         Optional<User> optionalUser = userRepository.findByUsername(login);
         return optionalUser.orElse(null);
     }
+
+    @Override
+    public List<User> getSortedUsersByRating(Long contestId) {
+        return null;
+    }
 }

@@ -14,4 +14,5 @@ public interface UserService {
     public List<User> getAllByContest(Long contestId);
     public List<User> getAllParticipantsByNomination(Long contestId);
     public User getUserByLogin(String login);
+    public List<User> getSortedUsersByRating(Long contestId);
 }
