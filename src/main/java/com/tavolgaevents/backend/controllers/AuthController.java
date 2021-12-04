@@ -1,17 +1,15 @@
 package com.tavolgaevents.backend.controllers;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
 import com.tavolgaevents.backend.models.*;
 import com.tavolgaevents.backend.repository.FileRepository;
+import com.tavolgaevents.backend.services.impl.AuthServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -46,6 +44,9 @@ public class AuthController {
   AuthenticationManager authenticationManager;
 
   @Autowired
+  AuthServiceImpl authService;
+
+  @Autowired
   UserRepository userRepository;
 
   @Autowired
@@ -62,11 +63,6 @@ public class AuthController {
 
   @Autowired
   FileRepository fileRepository;
-
-  @Autowired
-  public JavaMailSender emailSender;
-
-  private SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
 
   @PostMapping("/signin")
   public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -98,45 +94,7 @@ public class AuthController {
     if (userRepository.existsByEmail(signUpRequest.getEmail())) {
       return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
     }
-
-    User user = new User(signUpRequest.getUsername(), signUpRequest.getEmail(),
-        encoder.encode(signUpRequest.getPassword()));
-
-    user.setFirstName(signUpRequest.getFirstName());
-    user.setLastName(signUpRequest.getLastName());
-    user.setMiddleName(signUpRequest.getMiddleName());
-    String strRole = signUpRequest.getRole();
-    Optional<Role> userRole = Optional.empty();
-
-    if (strRole == null) {
-      userRole = roleRepository.findByName(RoleConstants.ROLE_USER);
-    } else {
-        switch (strRole) {
-        case RoleConstants.ROLE_ADMIN:
-          userRole = roleRepository.findByName(RoleConstants.ROLE_ADMIN);
-          break;
-        case RoleConstants.ROLE_ASSESSOR:
-          userRole = roleRepository.findByName(RoleConstants.ROLE_ASSESSOR);
-          break;
-          case RoleConstants.ROLE_JURY:
-            userRole = roleRepository.findByName(RoleConstants.ROLE_JURY);
-            break;
-        default:
-          userRole = roleRepository.findByName(RoleConstants.ROLE_USER);
-        }
-      }
-
-    user.setRole(userRole.get());
-    File file = new File();
-    userRepository.save(user);
-
-    simpleMailMessage.setTo(signUpRequest.getEmail());
-    simpleMailMessage.setSubject("User Credentials");
-    simpleMailMessage.setText("You have successfully registered on the ERK service! Your login: "
-            + signUpRequest.getUsername() + "\n Your password: " + signUpRequest.getPassword());
-
-    this.emailSender.send(simpleMailMessage);
-
+    authService.register(signUpRequest);
     return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
   }
 
@@ -144,7 +102,7 @@ public class AuthController {
   public ResponseEntity<?> refreshtoken(@Valid @RequestBody TokenRefreshRequest request) {
     String requestRefreshToken = request.getRefreshToken();
 
-    return tokenService.findByToken(requestRefreshToken)
+    return ResponseEntity.ok(tokenService.findByToken(requestRefreshToken)
         .map(tokenService::verifyExpiration)
         .map(RefreshToken::getUser)
         .map(user -> {
@@ -152,7 +110,7 @@ public class AuthController {
           return ResponseEntity.ok(new TokenRefreshResponse(token, requestRefreshToken));
         })
         .orElseThrow(() -> new TokenRefreshException(requestRefreshToken,
-            "Refresh token is not in database!"));
+            "Refresh token is not in database!")));
   }
   
   @PostMapping("/logout")

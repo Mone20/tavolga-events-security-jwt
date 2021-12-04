@@ -20,6 +20,9 @@ public class ContestPartType {
     public ContestPartType() {
     }
 
+    public ContestPartType(String name) {
+        this.name = name;
+    }
     public Long getId() {
         return id;
     }

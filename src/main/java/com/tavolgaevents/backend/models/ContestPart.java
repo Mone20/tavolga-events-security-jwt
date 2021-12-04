@@ -26,7 +26,7 @@ public class ContestPart {
     public Date endDate;
 
     @JsonView(Views.Private.class)
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     Contest contest;
 
     @JsonView(Views.Public.class)

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import javax.persistence.*;
 
 @Entity
-@Table(	name = "files")
+@Table(name = "files")
 public class File {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,6 +26,12 @@ public class File {
     public User user;
 
     public File() {
+    }
+
+    public File(String type, Float size, String path) {
+        this.type = type;
+        this.size = size;
+        this.path = path;
     }
 
     public Long getId() {

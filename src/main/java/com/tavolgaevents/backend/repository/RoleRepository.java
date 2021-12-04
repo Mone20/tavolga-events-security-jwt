@@ -13,4 +13,6 @@ public interface RoleRepository extends CrudRepository<Role, Long> {
   Optional<Role> findByName(String name);
 
   Optional<Role> findById(Integer id);
+
+    boolean existsByName(String role);
 }
