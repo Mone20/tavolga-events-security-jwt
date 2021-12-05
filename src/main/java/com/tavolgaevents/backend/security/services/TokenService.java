@@ -16,7 +16,7 @@ import com.tavolgaevents.backend.repository.UserRepository;
 
 @Service
 public class TokenService {
-  @Value("${bezkoder.app.jwtRefreshExpirationMs}")
+  @Value("${app.jwtRefreshExpirationMs}")
   private Long refreshTokenDurationMs;
 
   @Autowired
