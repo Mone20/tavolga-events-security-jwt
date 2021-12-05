@@ -2,6 +2,7 @@ package com.tavolgaevents.backend.controllers;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.tavolgaevents.backend.models.Contest;
+import com.tavolgaevents.backend.models.User;
 import com.tavolgaevents.backend.models.Views;
 import com.tavolgaevents.backend.payload.request.ContestRequest;
 import com.tavolgaevents.backend.repository.ContestRepository;
@@ -47,6 +48,13 @@ public class ContestController {
     public ResponseEntity<List<Contest>> getContestsByAssessorId(@PathVariable String userId) {
         List<Contest> contests = contestService.getContestByUserId(Long.parseLong(userId), true);
         return contests.isEmpty()? ResponseEntity.noContent().build() : ResponseEntity.ok(contests);
+    }
+    @JsonView(Views.Public.class)
+    @GetMapping("/rating/{contestId}")
+    @PreAuthorize("hasRole('ADMIN') or  hasRole('JURY')")
+    public ResponseEntity<List<User>> getRatingByContest(@PathVariable String contestId) {
+        List<User> users = contestService.getRatingByContentId(Long.parseLong(contestId));
+        return users.isEmpty()? ResponseEntity.noContent().build() : ResponseEntity.ok(users);
     }
 
     @JsonView(Views.Public.class)

@@ -1,5 +1,7 @@
 package com.tavolgaevents.backend.models;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
 import javax.persistence.*;
 
 @Entity
@@ -7,9 +9,11 @@ import javax.persistence.*;
 public class Role {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@JsonView(Views.Public.class)
 	private Integer id;
 
 	@Column(length = 20)
+	@JsonView(Views.Public.class)
 	private String name;
 
 	public Role() {

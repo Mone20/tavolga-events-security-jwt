@@ -21,8 +21,6 @@ public class UserController {
 	@Autowired
 	UserService userService;
 
-
-
 	@Autowired
 	RoleRepository roleRepository;
 
@@ -61,8 +59,8 @@ public class UserController {
 	@JsonView(Views.Public.class)
 	@GetMapping("/id/{userId}")
 	@PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
-	public String getUserById(@PathVariable String userId) {
-		return "User Content.";
+	public ResponseEntity<User> getUserById(@PathVariable String userId) {
+		return ResponseEntity.ok(userService.getUserById(Long.valueOf(userId)));
 	}
 
 	@JsonView(Views.Public.class)

@@ -16,13 +16,11 @@ public class ContestPart {
     public Long id;
 
     @JsonView(Views.Public.class)
-    @NotBlank
     public Date startDate;
 
     public String accessRole;
 
     @JsonView(Views.Public.class)
-    @NotBlank
     public Date endDate;
 
     @JsonView(Views.Private.class)

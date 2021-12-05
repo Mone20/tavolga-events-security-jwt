@@ -17,21 +17,27 @@ import java.util.List;
 public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@JsonView(Views.Public.class)
 	private Long id;
 
 	@NotBlank
 	@Size(max = 20)
+	@JsonView(Views.Public.class)
 	private String username;
 
 	@NotBlank
+	@JsonView(Views.Public.class)
 	private String firstName;
 
 	@NotBlank
+	@JsonView(Views.Public.class)
 	private String lastName;
 
 	@NotBlank
+	@JsonView(Views.Public.class)
 	private String middleName;
 
+	@JsonView(Views.Public.class)
 	public String phone;
 
 	@OneToOne
@@ -40,6 +46,7 @@ public class User {
 	@NotBlank
 	@Size(max = 50)
 	@Email
+	@JsonView(Views.Public.class)
 	private String email;
 
 	@NotBlank
@@ -47,6 +54,7 @@ public class User {
 	private String password;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonView(Views.Public.class)
 	private Role role;
 
 	@JsonView(Views.Private.class)

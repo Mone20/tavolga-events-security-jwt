@@ -23,7 +23,6 @@ public class Criterion {
     public String description;
 
     @JsonView(Views.Public.class)
-    @NotBlank
     public Integer maxAssessment;
 
     @JsonView(Views.Private.class)
@@ -34,6 +33,14 @@ public class Criterion {
     @OneToMany(mappedBy = "criterion", fetch = FetchType.LAZY)
         List<Assessment> assessments;
     public Criterion() {
+    }
+
+    public List<Assessment> getAssessments() {
+        return assessments;
+    }
+
+    public void setAssessments(List<Assessment> assessments) {
+        this.assessments = assessments;
     }
 
     public Long getId() {

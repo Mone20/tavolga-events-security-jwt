@@ -1,9 +1,7 @@
 package com.tavolgaevents.backend.services.impl;
 
-import com.tavolgaevents.backend.models.Contest;
-import com.tavolgaevents.backend.models.Nomination;
+import com.tavolgaevents.backend.models.*;
 import com.tavolgaevents.backend.payload.request.ContestRequest;
-import com.tavolgaevents.backend.models.User;
 import com.tavolgaevents.backend.repository.ContestRepository;
 import com.tavolgaevents.backend.repository.NominationRepository;
 import com.tavolgaevents.backend.services.ContestService;
@@ -14,8 +12,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 public class ContestServiceImpl implements ContestService {
@@ -43,6 +44,25 @@ public class ContestServiceImpl implements ContestService {
                         && contestPart.endDate.after(DateTime.now().toDate())))
                 .collect(Collectors.toList());
         return contests;
+    }
+
+    @Override
+    public List<User> getRatingByContentId(Long contentId) {
+        List<User> users = userService.getAllByContest(contentId);
+        List<UserRate> userRates = new ArrayList<>();
+        for(User user: users) {
+            int sum = 0;
+            for(Nomination nomination: user.getNominations()) {
+                for (Criterion criterion : nomination.getCriterionList()) {
+                    List<Integer> assessmentList = criterion.getAssessments().stream().map(Assessment::getAssessment).collect(Collectors.toList());
+                    for(Integer assessment : assessmentList) {
+                        sum += assessment;
+                    }
+                }
+            }
+            userRates.add(new UserRate(sum, user));
+        }
+        return userRates.stream().sorted(Comparator.comparingInt(UserRate::getResult)).map(UserRate::getUser).collect(Collectors.toList());
     }
 
     @Override
