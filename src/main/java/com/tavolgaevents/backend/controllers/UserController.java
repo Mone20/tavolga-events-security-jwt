@@ -73,10 +73,4 @@ public class UserController {
 		return role.map(value -> ResponseEntity.ok(userService.getUsersByRole(value))).orElseGet(() -> ResponseEntity.notFound().build());
 	}
 
-	@JsonView(Views.Public.class)
-	@GetMapping("/admin")
-	@PreAuthorize("hasRole('ADMIN')")
-	public String adminAccess() {
-		return "Admin Board.";
-	}
 }

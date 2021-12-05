@@ -58,21 +58,21 @@ public class AssessmentController {
 
     @JsonView(Views.Public.class)
     @PostMapping()
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('JURY') or hasRole('ASSESSOR')")
     public ResponseEntity<Assessment> createAssessment(@RequestBody AssessmentRequest request) {
         return ResponseEntity.ok(assessmentService.create(request));
     }
 
     @JsonView(Views.Public.class)
     @PutMapping("/{assessmentId}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('JURY') or hasRole('ASSESSOR')")
     public ResponseEntity<Assessment> updateAssessment(@RequestBody AssessmentRequest request, @PathVariable String assessmentId) {
         return ResponseEntity.ok(assessmentService.update(Long.parseLong(assessmentId), request));
     }
 
     @JsonView(Views.Public.class)
     @DeleteMapping("/{assessmentId}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('JURY') or hasRole('ASSESSOR')")
     public ResponseEntity<Object> deleteAssessment(@PathVariable String assessmentId) {
         assessmentService.delete(Long.parseLong(assessmentId));
         return ResponseEntity.ok().build();

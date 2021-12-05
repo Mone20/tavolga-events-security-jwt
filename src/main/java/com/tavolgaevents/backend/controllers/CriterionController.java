@@ -38,7 +38,7 @@ public class CriterionController {
 
     @JsonView(Views.Public.class)
     @GetMapping("/{nominationId}")
-    @PreAuthorize("hasRole('ASSESSOR') or hasRole('ADMIN')  or hasRole('JURY')")
+    @PreAuthorize("hasRole('ASSESSOR') or hasRole('ADMIN')  or hasRole('JURY') or hasRole('USER')")
     public ResponseEntity<List<Criterion>> getCriteriaByNominationId(@PathVariable String nominationId) {
         List<Criterion> criterion = nominationRepository.findById(Long.valueOf(nominationId)).get().getCriterionList();
         return criterion.isEmpty()? ResponseEntity.noContent().build() : ResponseEntity.ok(criterion);
@@ -47,7 +47,7 @@ public class CriterionController {
 
     @JsonView(Views.Public.class)
     @PostMapping()
-    @PreAuthorize("hasRole('ADMIN') or hasRole('ASSESSOR') or hasRole('JURY')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Criterion> createCriterion(@RequestBody CriterionRequest request) {
         return ResponseEntity.ok(criterionService.create(request));
     }

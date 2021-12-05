@@ -1,7 +1,8 @@
 package com.tavolgaevents.backend.controllers;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.tavolgaevents.backend.models.DownloadFileRequest;
+import com.tavolgaevents.backend.payload.request.DeleteFileRequest;
+import com.tavolgaevents.backend.payload.request.DownloadFileRequest;
 import com.tavolgaevents.backend.models.File;
 import com.tavolgaevents.backend.models.User;
 import com.tavolgaevents.backend.models.Views;
@@ -35,7 +36,7 @@ public class FileController {
 
     @JsonView(Views.Public.class)
     @PostMapping("/load/{userId}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER') or hasRole('ASSESSOR') or hasRole('JURY')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER') ")
     public ResponseEntity<Void> uploadFiles(@RequestBody MultipartFile file, @PathVariable String userId) {
         User user = userService.getUserById(Long.valueOf(userId));
         File fileModel = fileService.save(file);
@@ -45,11 +46,20 @@ public class FileController {
     }
 
     @GetMapping("/{userId}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER') or hasRole('ASSESSOR') or hasRole('JURY')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public ResponseEntity<List<File>> getListFiles(@PathVariable String userId) {
         List<File> fileInfos = fileRepository.findByUser(userService.getUserById(Long.valueOf(userId)));
         return fileInfos.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.status(HttpStatus.OK).body(fileInfos);
     }
+
+    @DeleteMapping()
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    public ResponseEntity<?> deleteFile(@RequestBody DeleteFileRequest request) {
+        File fileInfo = fileRepository.findById(Long.valueOf(request.fileId)).get();
+        fileService.delete(fileInfo.path);
+        return ResponseEntity.ok().build();
+    }
+
 
     @JsonView(Views.Public.class)
     @PostMapping("/download")

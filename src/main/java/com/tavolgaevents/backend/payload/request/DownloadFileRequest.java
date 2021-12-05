@@ -1,4 +1,4 @@
-package com.tavolgaevents.backend.models;
+package com.tavolgaevents.backend.payload.request;
 
 public class DownloadFileRequest {
 

@@ -9,10 +9,7 @@ import com.tavolgaevents.backend.services.impl.AuthServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -29,7 +26,7 @@ public class AuthRequestsController {
     AuthRequestRepository authRequestRepository;
 
     @JsonView(Views.Public.class)
-    @PostMapping("/all")
+    @GetMapping("/all")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<AuthRequest>> getAllRequests() {
         List<AuthRequest> authRequests = (List<AuthRequest>) authRequestRepository.findAll();
@@ -47,6 +44,15 @@ public class AuthRequestsController {
         authService.register(signupRequest);
         authRequestRepository.delete(authRequest);
         return ResponseEntity.ok().build();
+    }
+
+    @JsonView(Views.Public.class)
+    @PostMapping()
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<AuthRequest> createRequest(@RequestBody SignupRequest signupRequest) {
+        AuthRequest authRequest = signupRequest.convertToAuthRequest();
+        authRequestRepository.save(authRequest);
+        return ResponseEntity.ok(authRequest);
     }
 
     @JsonView(Views.Public.class)

@@ -36,6 +36,18 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
+    public void delete(String fileName) {
+        try {
+            Path file = root.resolve(fileName);
+            Files.delete(file);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Error: " + e.getMessage());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public File save(MultipartFile file) {
         try {
             StringBuilder fileName = new StringBuilder(file.getOriginalFilename());

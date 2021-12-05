@@ -1,9 +1,12 @@
 package com.tavolgaevents.backend.payload.request;
 
+import com.tavolgaevents.backend.models.AuthRequest;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.*;
- 
+import java.util.UUID;
+
 public class SignupRequest {
 
     @NotBlank
@@ -93,5 +96,16 @@ public class SignupRequest {
     
     public void setRole(String role) {
       this.role = role;
+    }
+
+    public AuthRequest convertToAuthRequest() {
+        AuthRequest authRequest = new AuthRequest();
+        authRequest.setUsername(username);
+        authRequest.setFirstName(firstName);
+        authRequest.setLastName(lastName);
+        authRequest.setMiddleName(middleName);
+        authRequest.setEmail(email);
+        authRequest.setPassword(password);
+        return authRequest;
     }
 }

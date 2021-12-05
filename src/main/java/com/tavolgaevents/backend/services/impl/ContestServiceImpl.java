@@ -56,7 +56,10 @@ public class ContestServiceImpl implements ContestService {
         contest.setName(request.name);
         if(!CollectionUtils.isEmpty(request.nominations)) {
             List<Long> longIds = request.nominations.stream().map(Long::parseLong).collect(Collectors.toList());
-            contest.setNominations(nominationRepository.findByIdIn(longIds));
+            if(!contest.getNominations().isEmpty())
+                contest.getNominations().addAll(nominationRepository.findByIdIn(longIds));
+            else
+                contest.setNominations(nominationRepository.findByIdIn(longIds));
         }
         contest = contestRepository.save(contest);
         return contest;
